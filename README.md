@@ -35,8 +35,7 @@ scNET.sh [input] [filename] [outdir] [BScore] [SVcore] [BSreuse] [SVreuse] [pack
 ```
 ## Parameters
 [input] : input gene expression matrix( it can be seurat object or gene-by-cell matrix )
-
-[filename] : Prefix name
+[filename] : output file prefix name
 
 [outdir] : output directory
 
@@ -44,9 +43,9 @@ scNET.sh [input] [filename] [outdir] [BScore] [SVcore] [BSreuse] [SVreuse] [pack
 
 [SVcore] : number of core used for SAVER
 
-[BSreuse] :
+[BSreuse] : Whether users reuse bigSCale matrix
 
-[SVreuse] :
+[SVreuse] : Whether users reuse SAVER matrix
 
 [package path] : directory path of this repository
 
