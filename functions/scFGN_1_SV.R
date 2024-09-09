@@ -18,7 +18,7 @@ parser$add_argument("-i", "--input", help="FULL PATH to exprs matrix or seurat r
 parser$add_argument("-r", "--reuse", default='F', help="type path to calculated saver rds object. This will be used instead [default %(default)s]")
 parser$add_argument("-o", "--output", help="filename, current directory will be added to prefix") #no dir prefix
 parser$add_argument("-d", "--outdir", help="saved directory")
-parser$add_argument("-g", "--genes", help="path to ccds or wanted genes, saved as a character vector RDS file")
+parser$add_argument("-gc", "--genes", help="path to ccds or wanted genes, saved as a character vector RDS file")
 parser$add_argument("-p", "--package", help = "provide path to where scNet package is")
 
 
@@ -60,29 +60,27 @@ if (reuse.sv != F & reuse.sv != T){
   quit()
 }
 
-#pubdata.path <- '/home2/bsb0613/Research/RawData/Network_DB'
-
 ReadCoverage <- function() {
   cat("Reading Coverage\n")
   datatype <- tail(unlist(strsplit(path.to.genes, "\\.")), n=1)
   if (datatype == 'csv'){
     seperate = ','
-    coverage <- read.table(file = path.to.genes, header =T, sep = seperate)
+    coverage <- read.table(file = paste0(path.to.package,path.to.genes), header =T, sep = seperate)
   }
   else if (datatype == 'tsv'){
     seperate = '\t'
-    coverage <- read.table(file =path.to.genes, header =T, sep = seperate)
+    coverage <- read.table(file =paste0(path.to.package,path.to.genes), header =T, sep = seperate)
   }
   else if(datatype == 'rds'){
-    coverage <- readRDS(file=path.to.genes)
+    coverage <- readRDS(file=paste0(path.to.package,path.to.genes))
   }
   else{
-    coverage <- read.table(file = path.to.genes, colClasses = 'character')[,1]
+    coverage <- read.table(file = paste0(path.to.package,path.to.genes), colClasses = 'character')[,1]
 
   }
   #read coverage and map data
   #check if the input for file exists was properly made
-  if (!file.exists(path.to.genes)){
+  if (!file.exists(paste0(path.to.package,path.to.genes))){
     cat("Error: input gene file not found. Check the directory or whether it is an RDS file")
     quit()
   }
@@ -152,7 +150,7 @@ if (reuse.sv == F){
   saver <- saver(data.prefiltered, ncores = ncores)
   estimate <- saver$estimate
   toc()
-  saveRDS(saver, file = paste0(out_dir, '/', output.file, '_saver.rds'))
+  saveRDS(saver, file = paste0(output.file, '_saver.rds'))
  
 } else if (reuse.sv == T){
   #read from the saved objects
@@ -181,7 +179,7 @@ net <- melt(corm, na.rm = T)
 
 #cut saver net (for faster calcluation to top 5 percent based on sorting technique)
 if (sort.type == 'absort'){
-  net <- net[abs(corm[,3]) > quantile(net(corm[,3]), 0.95), ] #absolute value??
+  net <- net[abs(corm[,3]) > quantile(net(corm[,3]), 0.95), ]
 }
 if (sort.type == 'sort'){
   net <- net[net[,3] > quantile(net[,3], 0.95), ]

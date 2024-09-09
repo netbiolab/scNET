@@ -7,9 +7,9 @@ parser <- ArgumentParser(description = 'this code takes gene by cell countmatrix
 parser$add_argument("-s", "--sort", default='sort', help="run absort to get clearer top bins [default %(default)s]")
 parser$add_argument("-c", "--cutoff", type="integer", default=0.05, help="cutoff threshold for zero enriched gene")
 parser$add_argument("-i", "--input", help="PATH to exprs matrix or seurat rds")
-#parser$add_argument("-r", "--reuse", default='F', help="type path of calcuated bs object. This will be used instead [default %(default)s]")
 parser$add_argument("-o", "--output", help="filename, current directory will be added to prefix") #no dir prefix
 parser$add_argument("-d", "--outdir", help="path to saved directory")
+parser$add_argument("-gc", "--genes", help="path to ccds or wanted genes, saved as a character vector RDS file")
 parser$add_argument("-g", "--gamma", default=20, help="supercell gamma parameter")
 
 
@@ -20,8 +20,36 @@ cutoff <- args$cutoff
 sort.type <- args$sort
 data.name <- args$output #preferably celltype name
 folder.path <- args$outdir
+path.to.genes <- args$genes
 gamma <- args$gamma
-#path.to.reuse <- args$reuse
+
+ReadCoverage <- function() {
+  cat("Reading Coverage\n")
+  datatype <- tail(unlist(strsplit(path.to.genes, "\\.")), n=1)
+  if (datatype == 'csv'){
+    seperate = ','
+    coverage <- read.table(file = paste0(path.to.package,path.to.genes), header =T, sep = seperate)
+  }
+  else if (datatype == 'tsv'){
+    seperate = '\t'
+    coverage <- read.table(file =paste0(path.to.package,path.to.genes), header =T, sep = seperate)
+  }
+  else if(datatype == 'rds'){
+    coverage <- readRDS(file=paste0(path.to.package,path.to.genes))
+  }
+  else{
+    coverage <- read.table(file = paste0(path.to.package,path.to.genes), colClasses = 'character')[,1]
+
+  }
+  #read coverage and map data
+  #check if the input for file exists was properly made
+  if (!file.exists(paste0(path.to.package,path.to.genes))){
+    cat("Error: input gene file not found. Check the directory or whether it is an RDS file")
+    quit()
+  }
+
+  return(coverage)
+}
 
 ReadData <- function(expr.file) {
   cat("Reading Data\n")
@@ -43,7 +71,7 @@ ReadData <- function(expr.file) {
     print('unknown file type: check input file')
     quit()
   }
-  #read.table and make appropriate adjustment for bigscale input
+
   return(data)
 }
 
@@ -51,7 +79,7 @@ library(data.table)
 library(SuperCell)
 library(ggplot2)
 library(ggpubr)
-#library(anndata)
+
 
 args = commandArgs(trailingOnly=TRUE)
 
@@ -72,8 +100,9 @@ setwd(folder.path)
 write.table(SC.GE,file='zero_SuperCell_expression_matrix.tsv',sep='\t',row.names=T,col.names=T,quote=F)
 SC.GE <- t(SC.GE)
 
-hnv3.genes <- readRDS('/home3/junhacha/HumanNetv3/Benchmark/HNv3_coverage_genes.rds')
-metacells.f <- SC.GE[,colnames(SC.GE) %in% hnv3.genes]
+coverage <- ReadCoverage()
+
+metacells.f <- SC.GE[,colnames(SC.GE) %in% coverage]
 
 corr.mat <- cor(metacells.f, method='pearson')
 print(paste0( dim(corr.mat)[1],"*",dim(corr.mat)[1]," correlation matrix is made!"))
@@ -81,7 +110,6 @@ corr.mat[!lower.tri(corr.mat)] <- NA
 
 corr.net <- reshape2::melt(corr.mat, na.rm = T)
 
-#take only positive values
 corr.net <- corr.net[corr.net[,3] > quantile(corr.net[,3], 0.90), ]
 
 

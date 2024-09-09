@@ -1,4 +1,4 @@
-#!/home/bsb0613/miniconda3/envs/scNET/bin/Rscript
+#!/usr/bin/env Rscript
 
 library(data.table)
 library(ggplot2)

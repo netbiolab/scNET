@@ -17,7 +17,7 @@ parser$add_argument("-i", "--input", help="PATH to exprs matrix or seurat rds")
 parser$add_argument("-r", "--reuse", default='F', help="type path of calcuated bs object. This will be used instead [default %(default)s]")
 parser$add_argument("-o", "--output", help="filename, current directory will be added to prefix") #no dir prefix
 parser$add_argument("-d", "--outdir", help="path to saved directory")
-parser$add_argument("-g", "--genes", help="path to ccds or wanted genes, saved as a character vector RDS file")
+parser$add_argument("-gc", "--genes", help="path to ccds or wanted genes, saved as a character vector RDS file")
 parser$add_argument("-p", "--package", help = "provide path to where scNet package is")
 
 args <- parser$parse_args()
@@ -39,9 +39,7 @@ path.to.package <- args$package
 path.to.genes <- args$genes
 path.to.reuse <- args$reuse
 
-print(path.to.genes)
-
-setwd(out_dir)
+setwd(path.to.package)
 
 if (args$reuse != 'F'){
   reuse.bs <- TRUE
@@ -71,29 +69,28 @@ ReadCoverage <- function() {
   datatype <- tail(unlist(strsplit(path.to.genes, "\\.")), n=1)
   if (datatype == 'csv'){
     seperate = ','
-    coverage <- read.table(file = path.to.genes, header =T, sep = seperate)
+    coverage <- read.table(file = paste0(path.to.package,path.to.genes), header =T, sep = seperate)
   }
   else if (datatype == 'tsv'){
     seperate = '\t'
-    coverage <- read.table(file =path.to.genes, header =T, sep = seperate)
+    coverage <- read.table(file =paste0(path.to.package,path.to.genes), header =T, sep = seperate)
   }
   else if(datatype == 'rds'){
-    coverage <- readRDS(file=path.to.genes)
+    coverage <- readRDS(file=paste0(path.to.package,path.to.genes))
   }
   else{
-    coverage <- read.table(file = path.to.genes, colClasses = 'character')[,1]
+    coverage <- read.table(file = paste0(path.to.package,path.to.genes), colClasses = 'character')[,1]
 
   }
   #read coverage and map data
   #check if the input for file exists was properly made
-  if (!file.exists(path.to.genes)){
+  if (!file.exists(paste0(path.to.package,path.to.genes))){
     cat("Error: input gene file not found. Check the directory or whether it is an RDS file")
     quit()
   }
 
   return(coverage)
 }
-
 ReadData <- function(expr.file) {
   cat("Reading Data\n")
   datatype <- tail(unlist(strsplit(expr.file, "\\.")), n=1)
@@ -144,7 +141,7 @@ if (reuse.bs == F){
 zscore <-dbl(bigscale.prefiltered$tot.scores)
 colnames(zscore) <- colnames(bigscale.prefiltered$correlations)
 #write genespace to know what gene we are making network with (they are filtered)
-write.table(colnames(zscore), file = paste0(output.file,'_Genespace_BS.txt'), quote=F, row.names=F, col.names=F)
+write.table(colnames(zscore), file = paste0(outfir,"/",output.file,'_Genespace_BS.txt'), quote=F, row.names=F, col.names=F)
 
 cat('calculating PCC...\n')
 corr.prefiltered <- cor(zscore, method = 'pearson')
@@ -156,17 +153,13 @@ corr.prefiltered[!lower.tri(corr.prefiltered)] <- NA
 net <- melt(corr.prefiltered, na.rm = T)
 
 if (sort.type == 'absort'){
-  net <- net[abs(net$value) > quantile(abs(net$value), cutoff), ] #absolute value??
+  net <- net[abs(net$value) > quantile(abs(net$value), cutoff), ] 
 }
 if (sort.type == 'sort'){
   net <- net[net$value > quantile(net$value, cutoff), ]
   #net <- net[net$value > 0,]
 }
 
-####
-#RPlist <- intersect(grep("^RPS|^RPL",net[,1]),grep("^RPS|^RPL",net[,2]))
-#net <- net[-RPlist,]
-####
 
 output1 <- paste0(out_dir,'/', output.file, '_BS_PCCnet')
 cat(paste('BS network name:', output1,'\n'))
