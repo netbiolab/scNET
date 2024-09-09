@@ -1,7 +1,7 @@
 # scNET
 
 Recontructing celltype-specific networks from single-cell RNA sequencing data
-
+![](images/introduction.png)
 ## WorkFlow introduction
-## Tequirements
+## Requirements
 ## Run with example data
