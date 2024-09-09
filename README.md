@@ -35,24 +35,17 @@ scNET.sh [input] [filename] [outdir] [BScore] [SVcore] [BSreuse] [SVreuse] [pack
 ```
 ## Parameters
 [input] : input gene expression matrix( it can be seurat object or gene-by-cell matrix )<br/>
-[filename] : output file prefix name
-
-[outdir] : output directory
-
-[BScore] : number of core used for BigSCale
-
-[SVcore] : number of core used for SAVER
-
-[BSreuse] : Whether users reuse bigSCale matrix
-
-[SVreuse] : Whether users reuse SAVER matrix
-
-[package path] : directory path of this repository
-
+[filename] : output file prefix name<br/>
+[outdir] : output directory<br/>
+[BScore] : number of core used for BigSCale<br/>
+[SVcore] : number of core used for SAVER<br/>
+[BSreuse] : Whether users reuse bigSCale matrix<br/>
+[SVreuse] : Whether users reuse SAVER matrix<br/>
+[package path] : directory path of this repository<br/>
 For example data,
 ```bash
 scNET.sh CRC_T_cell_count_matrix.txt CRC_T /scNET/output/ 10 10 F F /scNET/
 ```
-Using multiple cores will reduce the running time. If users want to use pre-processed data that already caculated, set the reuse parameter of the desired method to TRUE.
+Using multiple cores will reduce the running time.
 
 ## Citation
