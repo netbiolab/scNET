@@ -1,0 +1,16 @@
+ r-seurat
+ pandas
+ r-devtools
+ r-saver
+ bioconductor-singlecellexperiment
+ bioconductor-bioqc                                                         
+ bioconductor-org.hs.eg.db
+ bioconductor-org.mm.eg.db
+ r-reshape2
+ r-float
+ r-argparse
+ r-tictoc
+ r-ggraph
+ r-venndiagram
+ r-extrafont
+ r-drc
