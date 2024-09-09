@@ -49,6 +49,6 @@ We provide an examplary dataset of CD8+ Tcells from CRC context (XXX et al doi) 
 ```bash
 scNET.sh /example/input/CRC_T_cell_count_matrix.txt CRC_T /scNET/output/ 10 10 F F /scNET/
 ```
-Using multiple cores will reduce the running time.
+Setting multiple cores for BScore and SVcore parameter (10 cores each for the example code above) will reduce the running time.
 
 ## Citation
