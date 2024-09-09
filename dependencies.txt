@@ -14,3 +14,4 @@
  r-venndiagram
  r-extrafont
  r-drc
+ r-igraph
