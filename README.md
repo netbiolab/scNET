@@ -13,7 +13,7 @@ conda create --name scNET R==4.0
 conda activate scNET
 conda install --file dependencies.txt
 ```
-install other packages that can't install through conda
+Install additional packages that cannot be installed through Conda
 ```R
 devtools::install_github("iaconogi/bigSCale2")
 install.packages("igraph")
