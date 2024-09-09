@@ -34,7 +34,7 @@ devtools::install_github("GfellerLab/SuperCell")
 scNET.sh [input] [filename] [outdir] [BScore] [SVcore] [BSreuse] [SVreuse] [package path]
 ```
 ## Parameters
-[input] : input gene expression matrix( it can be seurat object or gene-by-cell matrix )
+[input] : input gene expression matrix( it can be seurat object or gene-by-cell matrix )<br/>
 [filename] : output file prefix name
 
 [outdir] : output directory
