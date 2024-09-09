@@ -44,7 +44,7 @@ scNET.sh [input] [filename] [outdir] [BScore] [SVcore] [BSreuse] [SVreuse] [pack
 [SVreuse] : Whether users reuse SAVER matrix<br/>
 [package path] : directory path of this repository<br/>
 
-We provide an examplary dataset of CD8+ Tcells from CRC context (XXX et al doi) in the example/input folder. by setting an output folder as ./example_output/ (is it automatically created if not existing?) files with CRC_T prefix will be generated within that folder. the XXXX_network.tsv is the final inferred de-novo network by combining edges inferred from each single-cell preprocessing methods and filtering them based on log-likelihood score (LLS) computed with the gold standard edge pairs provided in the input folder (GS_gold_standard_pairs.rds)
+We provide an examplary dataset of CD8+ Tcells from CRC context (Qian, J., Olbrecht, S., Boeckx, B. et al. https://doi.org/10.1038/s41422-020-0355-0) in the example/input folder. by setting an output folder as ./example_output/ files with CRC_T prefix will be generated within that folder. the CRC_T_scNET_Final_network.tsv is the final inferred de-novo network by combining edges inferred from each single-cell preprocessing methods and filtering them based on log-likelihood score (LLS) computed with the gold standard edge pairs provided in the input folder (GS_gold_standard_pairs.rds)
 
 when the process finishes compare the output results with the one provided by us in example/outputfiles/...
 Brief description of outputfiles if you want to add it.
