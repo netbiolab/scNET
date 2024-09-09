@@ -30,6 +30,7 @@ install.packages("irlba")
 devtools::install_github("GfellerLab/SuperCell")
 ```
 ## Usage
+The corefunction the run the entire pipeline is automated with scNET.sh. blah blah brief explanation.
 ```bash
 scNET.sh [input] [filename] [outdir] [BScore] [SVcore] [BSreuse] [SVreuse] [package path]
 ```
