@@ -30,7 +30,7 @@ install.packages("irlba")
 devtools::install_github("GfellerLab/SuperCell")
 ```
 ## Usage
-The corefunction the run the entire pipeline is automated with scNET.sh. blah blah brief explanation.
+The core function the run the entire pipeline is automated with scNET.sh. Briefly, it takes a seurat object or a count data file (tsv or csv), and with specific parameter outputs a inferred network in the form of edge list (gene, gene, LLS weight). prefix can be set for example as "CRC_CD8T" if the input single cell data is CD8+ T cells from colorectal cancer samples. calculated bigSCale object and SAVER-imputed values can be separately saved if BSreuse and SVreuse is set to TRUE.
 ```bash
 scNET.sh [input] [filename] [outdir] [BScore] [SVcore] [BSreuse] [SVreuse] [package path]
 ```
@@ -44,7 +44,7 @@ scNET.sh [input] [filename] [outdir] [BScore] [SVcore] [BSreuse] [SVreuse] [pack
 [SVreuse] : Whether users reuse SAVER matrix<br/>
 [package path] : directory path of this repository<br/>
 
-For example data,
+We provide an examplary dataset of CD8+ Tcells from CRC context (XXX et al doi) in the example/input folder. by setting an output folder as /scNET/output/ files with CRC_T prefix will be generated within that folder. the XXXX_network.tsv is the final inferred de-novo network by combining edges inferred from each single-cell preprocessing methods and filtering them based on log-likelihood score (LLS) computed with the gold standard edge pairs provided in the input folder (GS_gold_standard_pairs.rds)
 
 ```bash
 scNET.sh /example/input/CRC_T_cell_count_matrix.txt CRC_T /scNET/output/ 10 10 F F /scNET/
