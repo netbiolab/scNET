@@ -42,7 +42,9 @@ scNET.sh [input] [filename] [outdir] [BScore] [SVcore] [BSreuse] [SVreuse] [pack
 [BSreuse] : Whether users reuse bigSCale matrix<br/>
 [SVreuse] : Whether users reuse SAVER matrix<br/>
 [package path] : directory path of this repository<br/>
+
 For example data,
+
 ```bash
 scNET.sh /example/input/CRC_T_cell_count_matrix.txt CRC_T /scNET/output/ 10 10 F F /scNET/
 ```
