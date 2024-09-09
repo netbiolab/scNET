@@ -29,3 +29,7 @@ install.packages("irlba")
 devtools::install_github("GfellerLab/SuperCell")
 ```
 ## Usage
+```bash
+scNET.sh [input] [filename] [outdir] [BScore] [SVcore] [BSreuse] [SVreuse] [package path]
+```
+Using multiple cores will reduce the running time. If users want to use pre-processed data that already caculated, set the reuse parameter of the desired method to TRUE.
