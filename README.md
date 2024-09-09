@@ -3,5 +3,5 @@
 Recontructing celltype-specific networks from single-cell RNA sequencing data
 
 ## WorkFlow introduction
-## requirements
-## run with example data
+## Tequirements
+## Run with example data
