@@ -33,6 +33,19 @@ devtools::install_github("GfellerLab/SuperCell")
 ```bash
 scNET.sh [input] [filename] [outdir] [BScore] [SVcore] [BSreuse] [SVreuse] [package path]
 ```
+Parameters
+[input] : input gene expression matrix( it can be seurat object or gene-by-cell matrix )
+[filename] : Prefix name
+[outdir] : output directory
+[BScore] : number of core used for BigSCale
+[SVcore] : number of core used for SAVER
+[BSreuse] :
+[SVreuse] :
+[package path] : directory path of this repository
+For example data,
+```bash
+scNET.sh CRC_T_cell_count_matrix.txt CRC_T /scNET/output/ 10 10 F F /scNET/
+```
 Using multiple cores will reduce the running time. If users want to use pre-processed data that already caculated, set the reuse parameter of the desired method to TRUE.
 
 ## Citation
