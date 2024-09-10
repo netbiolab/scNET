@@ -3,11 +3,6 @@
 import sys
 import os
 
-# failed = os.popen("grep 'Maximum coverage at current LLS cutoff' %s" % sys.argv[1]).read()
-# if failed:
-# 	from math import floor
-# 	print("Optimization failed. Try with coverage %s" % floor(float(failed.split(":")[-1])))
-# 	exit()
 
 result = list()
 with open(sys.argv[1]) as REPORT:

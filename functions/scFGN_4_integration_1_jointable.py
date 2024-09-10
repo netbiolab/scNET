@@ -1,6 +1,5 @@
 #!/usr/bin/python3 -u
 # usage: ./code.py [DIRECTORY OF RESULT FILE(first)] [diretory/of/BSorSV_fit/*_fit]
-#./integration_1.py joined_net ./*_fit
 #sorted to have a bigger lls value on the first column
 
 import sys

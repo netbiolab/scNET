@@ -3,8 +3,7 @@
 #rds file must be a seurat file]
 #./Rscript.R --help for detail
 #Run Saver -> coverage filter -> cut correlation -> LLS.py -> draw benchmark graph
-#Junha Cha
-#04-13-2021
+
 
 
 #this code takes saver data, filter by cell type, and runs parallel PCC correlation matrix calculation
@@ -20,6 +19,7 @@ parser$add_argument("-o", "--output", help="filename, current directory will be 
 parser$add_argument("-d", "--outdir", help="saved directory")
 parser$add_argument("-gc", "--genes", help="path to ccds or wanted genes, saved as a character vector RDS file")
 parser$add_argument("-p", "--package", help = "provide path to where scNet package is")
+parser$add_argument("-gs", "--goldstandard", default='example/input/gold_standard_symbol_Hnv3.rds',help = "gold standard to evaluate LLS")
 
 
 args <- parser$parse_args()
@@ -40,6 +40,8 @@ out_dir <- args$outdir
 path.to.package <- args$package
 path.to.genes <- args$genes
 path.to.reuse <- args$reuse
+path.to.gs <- args$goldstandard
+
 setwd(out_dir)
 
 if (args$reuse != 'F'){
@@ -56,7 +58,7 @@ if (sort.type != 'absort' & sort.type != 'sort'){
 } 
 
 if (reuse.sv != F & reuse.sv != T){
-  cat('wrong input of bigscale object usage')
+  cat('wrong input of saver object usage')
   quit()
 }
 
@@ -138,11 +140,6 @@ if((genes.left / coverage.filtered.genes) < 0.2){
 cat(paste('removed additional',(coverage.filtered.genes - genes.left), 'genes...\n'))
 cat(paste('total genes left:'), genes.left, 'genes\n')
 
-
-#write genespace for conding filtered gene goes to current directory
-write.table(rownames(data.prefiltered), file = paste0(output.file,'_Genespace_SV.txt'), quote=F, row.names=F, col.names=F)
-
-
 #run saver
 if (reuse.sv == F){
   cat('running saver...\n')
@@ -217,7 +214,7 @@ if (!file.exists(sort.file.name)){
 
 #run regression analysis for net1 and net2
 cat("Running LLS.py ...\n")
-system(paste('python3', paste0(path.to.package,'/functions/LLS.py'), sort.file.name))
+system(paste('python3',path.to.package,'/functions/LLS.py', sort.file.name, ' ', path.to.package,path.to.gs))
 
 
 #remove unsorted network
@@ -234,12 +231,3 @@ if(!file.exists(paste0(sort.file.name, '.binlls'))){
 
 #read LLS benchmark output and save regression plots
 LLS.prefiltered <- read.table(file = paste0(sort.file.name, '.binlls'), sep='\t',header = T)
-
-
-#save plots
-cat('draw to pdf...done!\n')
-pdf(paste0(output.file, '_SV_benchmark.pdf'), width = 14)
-par(mfrow = c(1,2))
-plot(LLS.prefiltered$GeneCoverage / 18802 *100, LLS.prefiltered$cumLLS, main = 'Benchmark', xlab = 'coverage', ylab = 'cumLLS', type = 'l')
-plot(LLS.prefiltered$MeanBinStatistics,LLS.prefiltered$BinLLS, main = paste0('SV Regression 1000bin (',sort.type,')'), xlab = 'avg PCC', ylab = "binLLS", pch=19)
-dev.off()

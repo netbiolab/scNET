@@ -1,5 +1,4 @@
 #!/usr/bin/python3 -u
-# Author: Sungho Lee, 2018.07.26
 # Notes: fixed some bottlenecks & logical errors.
 
 import builtins
@@ -16,7 +15,7 @@ def print(*objects, **kwargs):
 	return builtins.print(*objects, **kwargs)
 
 parser = argparse.ArgumentParser(
-	prog="barleynet_integration_2_find_best_weight.py",
+	prog="scNet_integration_2_find_best_weight.py",
 	description="""Find best weight for network integration.
 (Python-ported script of optimize_D_inWS.pl)"""
 )

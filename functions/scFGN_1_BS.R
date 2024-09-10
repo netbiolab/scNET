@@ -1,11 +1,9 @@
 #!/usr/bin/env Rscript
 #this code takes an expression data as an input, runs bigSCale correlation calculaion, and produce a unsorted PCC graph
 #rds file must be a seurat file
-#./Rscript.R [-i FULL path to exprs UMI data] [-s sort] [-o 20K_monocytes]
 #./Rscript.R --help for detail
 #RunbigSCale -> coverage filter -> cut correlation -> LLS.py -> draw benchmark graph
-#Junha Cha
-#07-12-2019
+
 
 suppressPackageStartupMessages(library(argparse))
 
@@ -19,6 +17,7 @@ parser$add_argument("-o", "--output", help="filename, current directory will be 
 parser$add_argument("-d", "--outdir", help="path to saved directory")
 parser$add_argument("-gc", "--genes", help="path to ccds or wanted genes, saved as a character vector RDS file")
 parser$add_argument("-p", "--package", help = "provide path to where scNet package is")
+parser$add_argument("-gs", "--goldstandard", default='example/input/gold_standard_symbol_Hnv3.rds',help = "gold standard to evaluate LLS")
 
 args <- parser$parse_args()
 
@@ -38,6 +37,7 @@ out_dir <- args$outdir
 path.to.package <- args$package
 path.to.genes <- args$genes
 path.to.reuse <- args$reuse
+path.to.gs <- args$goldstandard
 
 setwd(path.to.package)
 
@@ -54,15 +54,6 @@ if (sort.type != 'absort' & sort.type != 'sort'){
   cat('Wrong sorting method')
   quit()
 } 
-
-#if (reuse.bs != F & reuse.bs != T){
-#  cat('wrong input of bigscale object usage')
-#  quit()
-#}
-
-
-#pubdata.path <- '/home2/bsb0613/Research/RawData/Network_DB'
-
 
 ReadCoverage <- function() {
   cat("Reading Coverage\n")
@@ -140,8 +131,6 @@ if (reuse.bs == F){
 #process corr
 zscore <-dbl(bigscale.prefiltered$tot.scores)
 colnames(zscore) <- colnames(bigscale.prefiltered$correlations)
-#write genespace to know what gene we are making network with (they are filtered)
-write.table(colnames(zscore), file = paste0(outfir,"/",output.file,'_Genespace_BS.txt'), quote=F, row.names=F, col.names=F)
 
 cat('calculating PCC...\n')
 corr.prefiltered <- cor(zscore, method = 'pearson')
@@ -157,7 +146,6 @@ if (sort.type == 'absort'){
 }
 if (sort.type == 'sort'){
   net <- net[net$value > quantile(net$value, cutoff), ]
-  #net <- net[net$value > 0,]
 }
 
 
@@ -192,8 +180,7 @@ if (!file.exists(sort.file.name)){
 
 #run regression analysis for net1 and net2
 cat("Running LLS.py ...\n")
-system(paste('python3', paste0(path.to.package,'/functions/LLS.py'), sort.file.name))
-# system(paste('python3.6 ~/bin/condLLS.py', sort.file.name, paste0('Genespace_BS_', output.file,'.txt')))
+system(paste('python3',path.to.package,'/functions/LLS.py', sort.file.name, ' ', path.to.package,path.to.gs))
 
 #remove unsorted network
 cat("removing unsorted network\n")
@@ -209,12 +196,3 @@ if(!file.exists(paste0(sort.file.name, '.binlls'))){
 
 #read LLS benchmark output and save regression plots
 LLS.prefiltered <- read.table(file = paste0(sort.file.name, '.binlls'), sep='\t',header = T)
-
-
-#save plots
-cat('draw to pdf...done!\n')
-pdf(paste0(output.file, '_BS_benchmark.pdf'), width = 14)
-par(mfrow = c(1,2))
-plot(LLS.prefiltered$GeneCoverage / 18802 *100, LLS.prefiltered$cumLLS, main = 'Benchmark', xlab = 'coverage', ylab = 'cumLLS', type = 'l')
-plot(LLS.prefiltered$MeanBinStatistics,LLS.prefiltered$BinLLS, main = paste0('BS Regression 1000bin (',sort.type,')'), xlab = 'avg PCC', ylab = "LLS", pch=19)
-dev.off()

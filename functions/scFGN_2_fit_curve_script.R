@@ -86,29 +86,6 @@ mc_lls.cut <- mc_lls[1:mc_bin,]
 mc_net.cut <- mc_net[1:(1000*mc_bin),]
 
 
-#BS_plot (before,after)
-pdf(file=paste0(output.file,"_BS_benchmark_compare.pdf"), width=14)
-par(mfrow = c(1,2))
-plot(bs_lls$MeanBinStatistics, bs_lls$BinLLS,main = paste0('BS Regression 1000bin (before)'), xlab = 'avg PCC', ylab = "LLS", pch=19)
-plot(bs_lls.cut$MeanBinStatistics, bs_lls.cut$BinLLS,main = paste0('BS Regression 1000bin (',bs_bin,' bins)'), xlab = 'avg PCC', ylab = "LLS", pch=19)
-dev.off()
-
-#SV_plot (before,after)
-pdf(file=paste0(output.file,"_SV_benchmark_compare.pdf"), width=14)
-par(mfrow = c(1,2))
-plot(sv_lls$MeanBinStatistics, sv_lls$BinLLS,main = paste0('SAVER Regression 1000bin (before)'), xlab = 'avg PCC', ylab = "LLS", pch=19)
-plot(sv_lls.cut$MeanBinStatistics, sv_lls.cut$BinLLS,main = paste0('SAVER Regression 1000bin (',sv_bin,' bins)'), xlab = 'avg PCC', ylab = "LLS", pch=19)
-dev.off()
-
-
-#SC_plot (before,after)
-pdf(file=paste0(output.file,"_MC_benchmark_compare.pdf"), width=14)
-par(mfrow = c(1,2))
-plot(mc_lls$MeanBinStatistics, mc_lls$BinLLS, main = paste0('MetaCell Regression 1000bin (before)'), xlab = 'avg PCC', ylab = "LLS", pch=19)
-plot(mc_lls.cut$MeanBinStatistics, mc_lls.cut$BinLLS, main = paste0('MetaCell Regression 1000bin (',mc_bin,' bins)'), xlab = 'avg PCC', ylab = "LLS", pch=19)
-dev.off()
-
-
 
 fit_LLS <- function(lls.cut, net.cut, output.file, method){
   ## BS_data

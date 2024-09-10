@@ -11,37 +11,6 @@ import pandas as pd
 import numpy as np
 from math import * 
 
-#print(sys.version)
-#exit()
-
-
-'''
-def calc_pearsonr_fast(expr_data, absort = True):
-    genes = expr_data.index
-    pcc = expr_data.transpose().corr(method='pearson')
-    net = pcc.corr().where(np.triu(np.ones(pcc.shape), k=1).astype(bool)).stack().reset_index()
-    net.columns = ['gene1', 'gene2', 'PCC']
-    net_cut = net.loc[(net["PCC"] > 0.6) | (net["PCC"] < -0.8)] #cut meaningless links
-
-    #join two columns of gene
-    cols = ['gene1', 'gene2']
-    net_cut['genepair'] = list(zip(net_cut.gene1, net_cut.gene2))
-    
-    #rename network rowname
-    net_cut.index = net_cut.genepair
-    edges_all = net_cut.loc[:,'PCC'] #series
-
-    
-    if absort == False:
-        edges_all = pd.Series(edges_all).abs().sort_values(ascending=False)
-    
-    edges_all = pd.Series(edges_all).sort_values(ascending=False)
-
-    print(edges_all)    
-    
-
-    return edges_all
-'''
 
 def read_edgelist(file_path):
     net = pd.read_csv(file_path, sep='\t')
@@ -179,38 +148,15 @@ def run_benchmark_LLS(target_network, gold_standard_pairs, already_sorted = True
     return pd.DataFrame().from_dict(benchdata).T
 
 
-corrnetpath =  sys.argv[1] #"/home3/junhacha/test/network_test/condLLS_test/sorted_network_file.tsv"
-#genelistfile = sys.argv[2] #"/home3/junhacha/test/network_test/condLLS_test/genelist.txt" 
-gsdatapath = "/home3/junhacha/public_Data/gold_standard_symbol_HNv3" # [name] [des] [gene1] [g2] [g3] ....
-#genelist = list() #this is the genespace critical for conLLS
+corrnetpath =  sys.argv[1] 
+gsdatapath = sys.argv[2]
 
-'''
-if (method != 'sort' and method != 'absort'):
-    print('wrong sorting method, type sort or absort')
-    exit()
-'''
-'''
-#genelist into list
-with open(genelistfile,'r') as fp:
-    for line in fp:
-        if line[0] == "#":
-            continue
-        genelist.append(line.rstrip())
-'''
+
 
 print('loading sorted PCCnet (cut) data')
 
 edges_all = read_edgelist(corrnetpath) # row : gene, column : sample, no NA values, tab seperated
 
-#either sort PPC absolute or regular
-'''
-print('make CX from single cell data...')
-
-if method == 'absort':
-    edges_all = calc_pearsonr_fast(scoretable)
-elif method == 'sort':
-    edges_all = calc_pearsonr_fast(scoretable, False) 
-'''
 
 #load gs data accounting for input genespace
 print('loading gold standard list filtered through genelist...')

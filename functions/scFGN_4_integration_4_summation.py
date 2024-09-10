@@ -12,7 +12,7 @@ def print(*objects, **kwargs):
 	return builtins.print(*objects, **kwargs)
 
 parser = argparse.ArgumentParser(
-	prog="barleynet_integration_4_summation.py",
+	prog="scNet_integration_4_summation.py",
 	description="""Make concensus table with given jointable & weight & LLS cutoff.
 (Python-ported script of concensus_by*.pl)"""
 )

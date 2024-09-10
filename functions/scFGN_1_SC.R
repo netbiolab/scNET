@@ -1,6 +1,5 @@
 #!/usr/bin/env Rscript
 
-#ex) ./scFGN_1_SC.R -d /home/sej4926/Bottom_up_network/Benchmarking/SuperCell/OVC/Macrophage/ -o OVC_Macrophage_10 -i /home/sej4926/scNET_OVC/tumor_only/Macrophage/OVC_Macrophage_countmatrix.tsv 
 suppressPackageStartupMessages(library(argparse))
 
 parser <- ArgumentParser(description = 'this code takes gene by cell countmatrix, filter by cell type, and runs supercell and PCC correlation matrix calculation')
@@ -11,6 +10,8 @@ parser$add_argument("-o", "--output", help="filename, current directory will be 
 parser$add_argument("-d", "--outdir", help="path to saved directory")
 parser$add_argument("-gc", "--genes", help="path to ccds or wanted genes, saved as a character vector RDS file")
 parser$add_argument("-g", "--gamma", default=20, help="supercell gamma parameter")
+parser$add_argument("-p", "--package", help = "provide path to where scNet package is")
+parser$add_argument("-gs", "--goldstandard", default='example/input/gold_standard_symbol_Hnv3.rds',help = "gold standard to evaluate LLS")
 
 
 args <- parser$parse_args()
@@ -22,6 +23,8 @@ data.name <- args$output #preferably celltype name
 folder.path <- args$outdir
 path.to.genes <- args$genes
 gamma <- args$gamma
+path.to.package <- args$package
+path.to.gs <- args$goldstandard
 
 ReadCoverage <- function() {
   cat("Reading Coverage\n")
@@ -97,7 +100,7 @@ SC.GE <- SC.GE[apply(SC.GE, 1, function(x) sum(x > 0) / length(x)) > cutoff, ]
 
 setwd(folder.path)
 
-write.table(SC.GE,file='zero_SuperCell_expression_matrix.tsv',sep='\t',row.names=T,col.names=T,quote=F)
+write.table(SC.GE,file='SuperCell_expression_matrix.tsv',sep='\t',row.names=T,col.names=T,quote=F)
 SC.GE <- t(SC.GE)
 
 coverage <- ReadCoverage()
@@ -125,8 +128,7 @@ system(paste('sort -nrk 3,3', output1, '>', sort.file.name))
 
 #run regression analysis for net1 and net2
 cat("Running LLS.py ...\n")
-system(paste('python3 /home3/junhacha/bin/LLS.py', sort.file.name))
-
+system(paste('python3 ',path.to.package,'/functions/LLS.py', sort.file.name, ' ', path.to.package,path.to.gs))
 
 #remove unsorted network
 cat("removing unsorted network\n")
@@ -135,12 +137,3 @@ system(paste('rm', output1))
 
 #read LLS benchmark output and save regression plots
 LLS.prefiltered <- read.table(file = paste0(sort.file.name, '.binlls'), sep='\t',header = T)
-
-
-#save plots
-cat('draw to pdf...done!\n')
-pdf(paste0(data.name, '_SC_benchmark.pdf'), width = 14)
-par(mfrow = c(1,2))
-plot(LLS.prefiltered$GeneCoverage / 18802 *100, LLS.prefiltered$cumLLS, main = 'Benchmark', xlab = 'coverage', ylab = 'cumLLS', type = 'l')
-plot(LLS.prefiltered$MeanBinStatistics,LLS.prefiltered$BinLLS, main = 'Regression 1000bin', xlab = 'avg PCC', ylab = "binLLS", pch=19)
-dev.off()
