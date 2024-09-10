@@ -56,10 +56,10 @@ Setting multiple cores for BScore and SVcore parameter (10 cores each for the ex
 ## Output file
 description of file | example of files|
 ---|---|
-preprocessed object|CRC_T_cell_bs.rds,CRC_T_cell_sv.rds,CRC_T_cell_supercell.tsv|
-bin of links filtering|CRC_T_cell_bin_automation.pdf|
-network after regression|CRC_T_cell_BS_fit,CRC_T_cell_BS_fit,CRC_T_cell_SC_fit|
-integrated network|CRC_T_cell_final_scFGN.tsv|
+**preprocessed object**|CRC_T_cell_bs.rds,CRC_T_cell_sv.rds,CRC_T_cell_supercell.tsv|
+**bin filtering threshold**|CRC_T_cell_bin_automation.pdf|
+**network after regression**|CRC_T_cell_BS_fit,CRC_T_cell_BS_fit,CRC_T_cell_SC_fit|
+**integrated network**|CRC_T_cell_final_scFGN.tsv|
 
 
 ## Citation
