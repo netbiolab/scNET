@@ -55,10 +55,10 @@ scNET.sh /example/input/CRC_T_cell_count_matrix.txt CRC_T ./example_output/ 10 1
 Setting multiple cores for BScore and SVcore parameter (10 cores each for the example code above) will reduce the running time.
 ## Output file
 
-preprocessed object|CRC_T_cell_bs.rds,CRC_T_cell_sv.rds,CRC_T_cell_supercell.tsv
-bin of links filtering|CRC_T_cell_bin_automation.pdf
-network after regression|CRC_T_cell_BS_fit,CRC_T_cell_BS_fit,CRC_T_cell_SC_fit
-integrated network|CRC_T_cell_final_scFGN.tsv
+preprocessed object|CRC_T_cell_bs.rds,CRC_T_cell_sv.rds,CRC_T_cell_supercell.tsv|
+bin of links filtering|CRC_T_cell_bin_automation.pdf|
+network after regression|CRC_T_cell_BS_fit,CRC_T_cell_BS_fit,CRC_T_cell_SC_fit|
+integrated network|CRC_T_cell_final_scFGN.tsv|
 
 
 ## Citation
