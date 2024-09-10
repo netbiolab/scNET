@@ -53,5 +53,13 @@ Brief description of outputfiles if you want to add it.
 scNET.sh /example/input/CRC_T_cell_count_matrix.txt CRC_T ./example_output/ 10 10 F F /scNET/
 ```
 Setting multiple cores for BScore and SVcore parameter (10 cores each for the example code above) will reduce the running time.
+## Output file
+CRC_T_cell_bs.rds
+CRC_T_cell_sv.rds
+CRC_T_cell_supercell.tsv
+CRC_T_cell_bin_automation.pdf
+CRC_T_cell_BS_fit
+CRC_T_cell_SV_fit
+CRC_T_cell_
 
 ## Citation
