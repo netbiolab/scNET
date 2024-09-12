@@ -47,10 +47,10 @@ scNET.sh [input] [filename] [outdir] [BScore] [SVcore] [BSreuse] [SVreuse] [pack
 We provide an examplary dataset of CD8+ Tcells from CRC context (Qian, J., Olbrecht, S., Boeckx, B. et al. https://doi.org/10.1038/s41422-020-0355-0) in the example/input folder. by setting an output folder as ./example_output/ files with CRC_T prefix will be generated within that folder. the CRC_T_scNET_Final_network.tsv is the final inferred de-novo network by combining edges inferred from each single-cell preprocessing methods and filtering them based on log-likelihood score (LLS) computed with the gold standard edge pairs provided in the input folder (GS_gold_standard_pairs.rds)
 
 when the process finishes compare the output results with the one provided by us in example/outputfiles/...
-Brief description of outputfiles if you want to add it.
 
 ```bash
-scNET.sh /example/input/CRC_T_cell_count_matrix.txt CRC_T ./example_output/ 10 10 F F /scNET/
+gunzip CRC_T_count.tsv
+scNET.sh /example/input/CRC_T_count.tsv CRC_T ./example_output/ 10 10 F F /scNET/
 ```
 Setting multiple cores for BScore and SVcore parameter (10 cores each for the example code above) will reduce the running time.
 ## Output file
