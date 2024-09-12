@@ -12,7 +12,7 @@ parser$add_argument("-i", "--input", help="WSnet with BS SV SC")
 parser$add_argument("-o", "--output", help="filename, current directory will be added to prefix")
 parser$add_argument("-d", "--outdir", help="saved directory")
 parser$add_argument("-p", "--package", help="provide path to where scNet package is")
-parser$add_argument("-gs", "--goldstandard", default='example/input/gold_standard_symbol_Hnv3.rds',help = "gold standard to evaluate LLS")
+parser$add_argument("-gs", "--goldstandard", default='example/input/gold_standard_symbol_HNv3',help = "gold standard to evaluate LLS")
 
 args <- parser$parse_args()
 
@@ -37,7 +37,7 @@ write.table(ws.net,paste0(output.file,'_WS_net_final'), quote=F, row.names = F, 
 
 #run regredssion.py on WS_net
 
-system(paste('python3 ',path.to.package,'/functions/LLS.py ', out_dir,'/',output.file, '_WS_net_final ',path.to.package,path.to.gs))
+system(paste0('python3 ',path.to.package,'/functions/LLS.py ', out_dir,output.file, '_WS_net_final ',path.to.package,path.to.gs))
 
 lls <- read.table(paste0(output.file,'_WS_net_final.binlls'), header=T)
 
@@ -56,7 +56,7 @@ ws.net$LLS_final <- lls.fit
 ws.net$WS <- NULL
 ws.net <- ws.net[order(ws.net$LLS_final, decreasing=T), ]
 
-ws.net <- ws.net[ws.net[,3] > 0.3, ]
+ws.net <- ws.net[ws.net[,3] > 1, ]
 
 write.table(ws.net, paste0(output.file,'_Final_integrated_network.tsv'), quote = F, row.names = F, col.names = T, sep = '\t')
 

@@ -11,7 +11,7 @@ parser$add_argument("-d", "--outdir", help="path to saved directory")
 parser$add_argument("-gc", "--genes", help="path to ccds or wanted genes, saved as a character vector RDS file")
 parser$add_argument("-g", "--gamma", default=20, help="supercell gamma parameter")
 parser$add_argument("-p", "--package", help = "provide path to where scNet package is")
-parser$add_argument("-gs", "--goldstandard", default='example/input/gold_standard_symbol_Hnv3.rds',help = "gold standard to evaluate LLS")
+parser$add_argument("-gs", "--goldstandard", default='example/input/gold_standard_symbol_HNv3',help = "gold standard to evaluate LLS")
 
 
 args <- parser$parse_args()
@@ -59,11 +59,13 @@ ReadData <- function(expr.file) {
   datatype <- tail(unlist(strsplit(expr.file, "\\.")), n=1)
   if (datatype == 'csv'){
     seperate = ','
-    data <- read.table(file = expr.file, header =T, sep = seperate)
+    data <- as.matrix(read.table(file = expr.file, header =T, sep = seperate))
+
   }
   else if (datatype == 'tsv'){
     seperate = '\t'
-    data <- read.table(file = expr.file, header =T, sep = seperate)
+    data <- as.matrix(read.table(file = expr.file, header =T, sep = seperate))
+
   }
   else if(datatype == 'rds'){
     seurat <- readRDS(expr.file)
@@ -113,7 +115,7 @@ corr.mat[!lower.tri(corr.mat)] <- NA
 
 corr.net <- reshape2::melt(corr.mat, na.rm = T)
 
-corr.net <- corr.net[corr.net[,3] > quantile(corr.net[,3], 0.90), ]
+corr.net <- corr.net[corr.net[,3] > quantile(corr.net[,3], 0.95), ]
 
 
 output1 <- paste0(data.name, '_SC_PCCnet')
@@ -128,12 +130,9 @@ system(paste('sort -nrk 3,3', output1, '>', sort.file.name))
 
 #run regression analysis for net1 and net2
 cat("Running LLS.py ...\n")
-system(paste('python3 ',path.to.package,'/functions/LLS.py', sort.file.name, ' ', path.to.package,path.to.gs))
+system(paste0('python3 ',path.to.package,'functions/LLS.py ', sort.file.name, ' ', path.to.package,path.to.gs))
 
 #remove unsorted network
 cat("removing unsorted network\n")
 system(paste('rm', output1))
 
-
-#read LLS benchmark output and save regression plots
-LLS.prefiltered <- read.table(file = paste0(sort.file.name, '.binlls'), sep='\t',header = T)

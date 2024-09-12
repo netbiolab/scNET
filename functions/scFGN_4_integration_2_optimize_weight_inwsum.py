@@ -1,5 +1,4 @@
 #!/usr/bin/python3 -u
-# Notes: fixed some bottlenecks & logical errors.
 
 import builtins
 import sys

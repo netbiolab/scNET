@@ -75,15 +75,6 @@ elif args.method == "naivesum":
 else:
 	weight = args.weight
 
-'''
-jointable = dict()
-with open(args.jointable) as J:
-	for line in J:
-		values = sorted([float(k) for k in line.strip().split("\t")[2:] if k != "NA" and float(k) >= args.cutoff], reverse=True)
-		if values:
-			print(line.strip(), weighted_sum(weight, values), sep="\t", file=output)
-'''     
-
 jointable = list()
 with open(args.jointable) as J:
   for line in J:

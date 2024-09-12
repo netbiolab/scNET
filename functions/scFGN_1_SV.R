@@ -11,7 +11,7 @@ suppressPackageStartupMessages(library(argparse))
 
 parser <- ArgumentParser(description = 'this code takes seurat data, filter by cell type, and runs saver and PCC correlation matrix calculation')
 parser$add_argument("-s", "--sort", default='sort', help="run absort to get clearer top bins [default %(default)s]")
-parser$add_argument("-c", "--cutoff", type = 'double', default=95, help="95 percent zero genes are removed [default %(default)s]")
+parser$add_argument("-c", "--cutoff", type = 'double', default=99, help="99 percent zero genes are removed [default %(default)s]")
 parser$add_argument("-n", "--nCore", type = 'integer', default=12, help="number of threads for saver computation [default %(default)s]")
 parser$add_argument("-i", "--input", help="FULL PATH to exprs matrix or seurat rds")
 parser$add_argument("-r", "--reuse", default='F', help="type path to calculated saver rds object. This will be used instead [default %(default)s]")
@@ -19,7 +19,7 @@ parser$add_argument("-o", "--output", help="filename, current directory will be 
 parser$add_argument("-d", "--outdir", help="saved directory")
 parser$add_argument("-gc", "--genes", help="path to ccds or wanted genes, saved as a character vector RDS file")
 parser$add_argument("-p", "--package", help = "provide path to where scNet package is")
-parser$add_argument("-gs", "--goldstandard", default='example/input/gold_standard_symbol_Hnv3.rds',help = "gold standard to evaluate LLS")
+parser$add_argument("-gs", "--goldstandard", default='example/input/gold_standard_symbol_HNv3',help = "gold standard to evaluate LLS")
 
 
 args <- parser$parse_args()
@@ -95,11 +95,12 @@ ReadData <- function(expr.file) {
   datatype <- tail(unlist(strsplit(expr.file, "\\.")), n=1)
   if (datatype == 'csv'){
     seperate = ','
-    data <- read.table(file = expr.file, header =T, sep = seperate)
+    data <- as.matrix(read.table(file = expr.file, header =T, sep = seperate))
+
   }
   else if (datatype == 'tsv'){
     seperate = '\t'
-    data <- read.table(file = expr.file, header =T, sep = seperate)
+    data <- as.matrix(read.table(file = expr.file, header =T, sep = seperate))
   }
   else if(datatype == 'rds'){
     seurat <- readRDS(expr.file)
@@ -116,6 +117,7 @@ ReadData <- function(expr.file) {
 
 
 #read data and filter by coding genes
+
 coverage <- ReadCoverage()
 data <- ReadData(path.to.exprs)
 data.prefiltered <- data[rownames(data) %in% coverage, ]
@@ -126,7 +128,7 @@ cat(paste('coverage genes filtering left:', nrow(data.prefiltered), '\n'))
 #additionally filter genes that are >99% zeros (nonzero values of 1 percent or higher)
 cat(paste('additional filtering to retain over', cutoff * 100, 'percent non-zero values...\n'))
 data.prefiltered <- data.prefiltered[apply(data.prefiltered, 1, function(x) sum(x > 0) / length(x)) > cutoff, ]
-
+data.prefiltered <- data.prefiltered[,! colSums(data.prefiltered)== 0 ]
 #print how many genes were filtered
 genes.left <- nrow(data.prefiltered)
 
@@ -183,13 +185,9 @@ if (sort.type == 'sort'){
 }
 
 #set name for network
-output1 <- paste0(out_dir,'/', output.file, '_SV_PCCnet')
+output1 <- paste0(output.file, '_SV_PCCnet')
 cat(paste('saver network name:', output1,'\n'))
 
-####
-#RPlist <- intersect(grep("^RPS|^RPL",net[,1]),grep("^RPS|^RPL",net[,2]))
-#net <- net[-RPlist,]
-####
 
 #write network
 write.table(net, file = output1, quote = F, row.names = F, sep = '\t', col.names = F)
@@ -197,7 +195,7 @@ write.table(net, file = output1, quote = F, row.names = F, sep = '\t', col.names
 #sort network based on sorting technique
 if (sort.type == 'absort'){
   sort.file.name <- paste0(output1, '_absorted')
-  system(paste(path.to.package,'/functions/absort', output1, ncores))
+  system(paste0(path.to.package,'functions/absort ', output1, ncores))
   
 }else if(sort.type == 'sort'){
   sort.file.name <- paste0(output1, '_possorted')
@@ -214,7 +212,7 @@ if (!file.exists(sort.file.name)){
 
 #run regression analysis for net1 and net2
 cat("Running LLS.py ...\n")
-system(paste('python3',path.to.package,'/functions/LLS.py', sort.file.name, ' ', path.to.package,path.to.gs))
+system(paste0('python3 ',path.to.package,'functions/LLS.py ', sort.file.name, ' ', path.to.package,path.to.gs))
 
 
 #remove unsorted network
@@ -227,7 +225,3 @@ if(!file.exists(paste0(sort.file.name, '.binlls'))){
   cat("Error: Problem with LLS analysis prefiltered. Read SAVER.rds from current directory and try again\n")
   quit()
 }
-
-
-#read LLS benchmark output and save regression plots
-LLS.prefiltered <- read.table(file = paste0(sort.file.name, '.binlls'), sep='\t',header = T)

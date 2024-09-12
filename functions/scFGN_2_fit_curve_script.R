@@ -2,12 +2,6 @@
 #this code takes BS and SAVER and MC network and .binLLS file and fits sigmoidal or logistic regression model
 #make a new column for the integrated column with LLS score
 #Rscript script.R [possorted.binlls] [possorted]
-#Junha Cha 2021.04
-
-# Seungbyn Baek mod 2021.05.11
-# script.R -bl [BS_possorted.binlls] -b [BS_possorted] -sl [SV_possorted.binlls] -s [SV_possorted] [MC_ossorted.binlls] [MC_possorted] [BS_bin] [SV_bin] [MC_bin] [out_dir] [outputfile]
-
-#modified Junha Cha 2022.06.30
 
 suppressPackageStartupMessages(library(argparse))
 ## input files
@@ -96,10 +90,6 @@ fit_LLS <- function(lls.cut, net.cut, output.file, method){
   model <- drm(BinLLS ~ MeanBinStatistics, fct = L.4(), data = data) #parameter 4 log logistic model
   print(model)
   
-  #check
-  pdf(file=paste0(output.file,"_",method,"_model.pdf"))
-  plot(model, log="", main = "BS 4 param Logistic function",pch=19)
-  dev.off()
   
   #take LLS values from constructed model
   lls.fit <- predict(model, data.frame(net.cut[,3]))

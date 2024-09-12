@@ -17,7 +17,7 @@ parser$add_argument("-o", "--output", help="filename, current directory will be 
 parser$add_argument("-d", "--outdir", help="path to saved directory")
 parser$add_argument("-gc", "--genes", help="path to ccds or wanted genes, saved as a character vector RDS file")
 parser$add_argument("-p", "--package", help = "provide path to where scNet package is")
-parser$add_argument("-gs", "--goldstandard", default='example/input/gold_standard_symbol_Hnv3.rds',help = "gold standard to evaluate LLS")
+parser$add_argument("-gs", "--goldstandard", default='example/input/gold_standard_symbol_HNv3',help = "gold standard to evaluate LLS")
 
 args <- parser$parse_args()
 
@@ -35,18 +35,16 @@ ncores <- args$nCore
 output.file <- args$output #preferably celltype name
 out_dir <- args$outdir
 path.to.package <- args$package
-path.to.genes <- args$genes
 path.to.reuse <- args$reuse
+path.to.genes <- args$genes
 path.to.gs <- args$goldstandard
 
-setwd(path.to.package)
-
+setwd(out_dir)
 if (args$reuse != 'F'){
   reuse.bs <- TRUE
 }else if (args$reuse == 'F'){
   reuse.bs <- FALSE
 }
-
 
 #test arguments
 args = commandArgs(trailingOnly=TRUE)
@@ -82,16 +80,19 @@ ReadCoverage <- function() {
 
   return(coverage)
 }
+
 ReadData <- function(expr.file) {
   cat("Reading Data\n")
   datatype <- tail(unlist(strsplit(expr.file, "\\.")), n=1)
   if (datatype == 'csv'){
     seperate = ','
-    data <- read.table(file = expr.file, header =T, sep = seperate)
+    data <- as.matrix(read.table(file = expr.file, header =T, sep = seperate))
+
   }
   else if (datatype == 'tsv'){
     seperate = '\t'
-    data <- read.table(file = expr.file, header =T, sep = seperate)
+    data <- as.matrix(read.table(file = expr.file, header =T, sep = seperate))
+
   }
   else if(datatype == 'rds'){
     seurat <- readRDS(expr.file)
@@ -108,8 +109,11 @@ ReadData <- function(expr.file) {
 
 
 #get coverage genes, and filter the input scRNA seq data
+
 coverage <- ReadCoverage()
+
 data <- ReadData(path.to.exprs)
+
 data.prefiltered <- data[rownames(data) %in% coverage, ] #filter the data to the input genes
 
 
@@ -149,7 +153,7 @@ if (sort.type == 'sort'){
 }
 
 
-output1 <- paste0(out_dir,'/', output.file, '_BS_PCCnet')
+output1 <- paste0(output.file, '_BS_PCCnet')
 cat(paste('BS network name:', output1,'\n'))
 
 #writeoutput in inprogress folder
@@ -180,7 +184,7 @@ if (!file.exists(sort.file.name)){
 
 #run regression analysis for net1 and net2
 cat("Running LLS.py ...\n")
-system(paste('python3',path.to.package,'/functions/LLS.py', sort.file.name, ' ', path.to.package,path.to.gs))
+system(paste0('python3 ',path.to.package,'functions/LLS.py ', sort.file.name, ' ', path.to.package,path.to.gs))
 
 #remove unsorted network
 cat("removing unsorted network\n")
@@ -194,5 +198,3 @@ if(!file.exists(paste0(sort.file.name, '.binlls'))){
   quit()
 }
 
-#read LLS benchmark output and save regression plots
-LLS.prefiltered <- read.table(file = paste0(sort.file.name, '.binlls'), sep='\t',header = T)
